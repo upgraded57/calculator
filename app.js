@@ -16,6 +16,8 @@ let result;
 let lastEntryIsSign = false;
 let lastEntryIsDot = false;
 let screenIsFull = false;
+let lastSignEntry = "";
+let lastEntryIsDotted = false;
 
 // initialize clear buttons elements
 const clrAllBtn = document.querySelector(".clr-all");
@@ -42,7 +44,8 @@ numBtns.forEach((numBtn) => {
 opBtns.forEach((opBtn) => {
   opBtn.onclick = () => {
     // Check if screen is not full
-    if (Array.from(currentExpression).length < 13) {
+    lastSignEntry = opBtn.getAttribute("data-sign");
+    if (Array.from(currentExpression).length < 16) {
       // create an array to store entries
       let lastEntry = Array.from(
         currentExpression[Array.from(currentExpression).length - 1]
@@ -78,6 +81,8 @@ opBtns.forEach((opBtn) => {
     } else {
       alert("Maximum input has been reached");
     }
+
+    return (lastSignEntry = opBtn.innerText);
   };
 });
 
@@ -119,6 +124,16 @@ eqlBtn.onclick = () => {
 // functionality for dot
 
 dotBtn.onclick = () => {
+  // check if first or last number is already dotted
+  if (
+    currentExpression.split(lastSignEntry).slice(1).join().includes(".") ||
+    currentExpression.split(lastSignEntry).slice(-1).join().includes(".")
+  ) {
+    lastEntryIsDotted = true;
+  } else {
+    lastEntryIsDotted = false;
+  }
+
   // check if dot was the last entry
 
   // create an array to store entries
@@ -133,13 +148,28 @@ dotBtn.onclick = () => {
     lastEntryIsDot = false;
   }
 
-  if (lastEntryIsDot) {
+  // initialize a variable to check if last entry is a sign
+  if (
+    lastEntry == "+" ||
+    lastEntry == "-" ||
+    lastEntry == "*" ||
+    lastEntry == "/"
+  ) {
+    lastEntryIsSign = true;
+  } else {
+    lastEntryIsSign = false;
+  }
+
+  // prevents further entry of dot if last entry is a dot or a mathematical operation sign
+  if (lastEntryIsDot || lastEntryIsSign || lastEntryIsDotted) {
     return;
   } else {
     currentExpression += ".";
     pryDisplay.innerText = currentExpression;
   }
+
+  console.log(lastEntryIsDotted);
 };
 
 // How to check if dot is already present in number
-// Split current expression to the left until sign in reached and check if the splited expression contains dot
+// Split current expression on basis of sign then check if the last element in the splited expression contains dot
