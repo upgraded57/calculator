@@ -35,7 +35,7 @@ numBtns.forEach((numBtn) => {
 
       return currentExpression;
     } else {
-      alert("Maximum input has been reached");
+      alert("Maximum input length has been reached");
     }
   };
 });
@@ -43,46 +43,55 @@ numBtns.forEach((numBtn) => {
 // function to add mathematical operation sign to display
 opBtns.forEach((opBtn) => {
   opBtn.onclick = () => {
-    // Check if screen is not full
-    lastSignEntry = opBtn.getAttribute("data-sign");
-    if (Array.from(currentExpression).length < 16) {
-      // create an array to store entries
-      let lastEntry = Array.from(
-        currentExpression[Array.from(currentExpression).length - 1]
-      ).join("");
-
-      // initialize a variable to check if last entry is a sign
-      if (
-        lastEntry == "+" ||
-        lastEntry == "-" ||
-        lastEntry == "*" ||
-        lastEntry == "/"
-      ) {
-        lastEntryIsSign = true;
-      } else {
-        lastEntryIsSign = false;
-      }
-      // add sign to expressions if last entry is not a sign
-      if (!lastEntryIsSign) {
-        let selectedOp = opBtn.getAttribute("data-sign");
-        currentExpression += selectedOp;
-        pryDisplay.innerText = currentExpression;
-      } else {
-        // pop out the last sign and replace it with current expression
-        let newCurrentExpression = Array.from(currentExpression);
-        newCurrentExpression.pop();
-
-        let selectedOp = opBtn.getAttribute("data-sign");
-        currentExpression = newCurrentExpression.join("") + selectedOp;
-        pryDisplay.innerText = currentExpression;
-      }
-
-      return currentExpression;
+    // check if current expression is empty and sign input is minus (to allow input of negative number)
+    if (
+      opBtn.innerText == "-" &&
+      currentExpression.trim().split("").length == 0
+    ) {
+      currentExpression += "-";
     } else {
-      alert("Maximum input has been reached");
-    }
+      // save selected sign in lastEntrySign variable to be used later when checking for dots
+      lastSignEntry = opBtn.getAttribute("data-sign");
+      // Check if screen is not full
+      if (Array.from(currentExpression).length < 16) {
+        // create a lastEntry variable to store last input (to be used to check if last input was a sign)
+        let lastEntry = Array.from(
+          currentExpression[Array.from(currentExpression).length - 1]
+        ).join("");
 
-    return (lastSignEntry = opBtn.innerText);
+        // Check if last entry is a sign
+        if (
+          lastEntry == "+" ||
+          lastEntry == "-" ||
+          lastEntry == "*" ||
+          lastEntry == "/"
+        ) {
+          lastEntryIsSign = true;
+        } else {
+          lastEntryIsSign = false;
+        }
+        // add sign to expressions if last entry is not a sign
+        if (!lastEntryIsSign) {
+          let selectedOp = opBtn.getAttribute("data-sign");
+          currentExpression += selectedOp;
+          pryDisplay.innerText = currentExpression;
+        } else {
+          // pop out the last sign and replace it with current input sign
+          let newCurrentExpression = Array.from(currentExpression);
+          newCurrentExpression.pop();
+
+          let selectedOp = opBtn.getAttribute("data-sign");
+          currentExpression = newCurrentExpression.join("") + selectedOp;
+          pryDisplay.innerText = currentExpression;
+        }
+
+        return currentExpression;
+      } else {
+        alert("Maximum input length has been reached");
+      }
+
+      return (lastSignEntry = opBtn.innerText);
+    }
   };
 });
 
@@ -167,9 +176,4 @@ dotBtn.onclick = () => {
     currentExpression += ".";
     pryDisplay.innerText = currentExpression;
   }
-
-  console.log(lastEntryIsDotted);
 };
-
-// How to check if dot is already present in number
-// Split current expression on basis of sign then check if the last element in the splited expression contains dot
