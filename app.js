@@ -14,6 +14,7 @@ const eqlBtn = document.querySelector(".eql-btn");
 let currentExpression = "";
 let result;
 let lastEntryIsSign = false;
+let lastEntryIsDot = false;
 let screenIsFull = false;
 
 // initialize clear buttons elements
@@ -109,13 +110,36 @@ eqlBtn.onclick = () => {
   } else {
     secDisplay.innerText = currentExpression;
     result = eval(currentExpression);
-    pryDisplay.innerText = result;
+
+    // convert result to string and limit its content to 12 digits if more than
+    pryDisplay.innerText = result.toString().substring(0, 12);
   }
 };
 
 // functionality for dot
 
 dotBtn.onclick = () => {
-  currentExpression += ".";
-  pryDisplay.innerText = currentExpression;
+  // check if dot was the last entry
+
+  // create an array to store entries
+  let lastEntry = Array.from(
+    currentExpression[Array.from(currentExpression).length - 1]
+  ).join("");
+
+  // initialize a variable to check if last entry is a sign
+  if (lastEntry == ".") {
+    lastEntryIsDot = true;
+  } else {
+    lastEntryIsDot = false;
+  }
+
+  if (lastEntryIsDot) {
+    return;
+  } else {
+    currentExpression += ".";
+    pryDisplay.innerText = currentExpression;
+  }
 };
+
+// How to check if dot is already present in number
+// Split current expression to the left until sign in reached and check if the splited expression contains dot
